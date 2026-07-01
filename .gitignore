@@ -5,3 +5,7 @@ Geneformer
 tryHarmony.ipynb
 tokenized
 .ipynb_checkpoints
+emb
+vectors
+.claude
+.mypy_cache
