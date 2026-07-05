@@ -11,7 +11,7 @@ SIG = os.environ.get("CRC_SIG", "data/crc/signatures.parquet")
 HELD = ["Chen_2024_Cancer_Cell", "Lee_2020_Nat_Genet", "Uhlitz_2021_EMBO_Mol_Med",
         "MUI_Innsbruck", "Zhang_2020_Cell"]
 BASE_TECH = "10x 5' v1"
-QUANT = 0.75
+QUANT = 0.90
 N_POS = 25
 N_NEG = 25
 K = 20

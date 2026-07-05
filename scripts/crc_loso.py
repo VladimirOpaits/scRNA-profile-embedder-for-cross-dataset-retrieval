@@ -6,7 +6,7 @@ import crc_enrichment as ce
 N = 12
 K = 10
 SEEDS = 30
-QUANT = 0.75
+QUANT = 0.90
 MIN_MINORITY = 10
 
 
