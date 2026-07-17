@@ -8,7 +8,7 @@ N_POS = 15
 N_NEG = 15
 K = 15
 SEEDS = 50
-QUANT = 0.90
+QUANT = 0.75
 
 
 def cohort_curve(pool, D, held, arm, seed):

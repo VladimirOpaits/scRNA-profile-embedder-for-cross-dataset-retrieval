@@ -12,3 +12,4 @@ vectors
 __pycache__
 *.csv
 *.h5ad
+*.tar
