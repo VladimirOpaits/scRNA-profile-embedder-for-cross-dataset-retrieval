@@ -36,19 +36,25 @@ KS = [1, 2, 4, 6]
 BLAS_THREADS = 2
 
 CONFIG = {
+    # held = all paired studies with minority-class >= 5 (top-5 by minority first, kept for cache
+    # stability; the rest added 2026-07-18 to expand LOSO for precision-weighted stats).
     "brain": dict(sig="data/brain/signatures_lf_pfc.parquet", pca="data/brain/pca50.npy",
                   cells="data/brain/cells.parquet", ctype="data/brain/cell_types.parquet",
                   ctcol="cell_type_coarse_brain", pidcol="pid", ycol="y_from_sig",
-                  held=["37a17b78", "6f7fd0f1", "5e57cd50", "3b8b5de4", "d3cb449b"]),
+                  held=["37a17b78", "6f7fd0f1", "5e57cd50", "3b8b5de4", "d3cb449b",
+                        "98f5d518", "cff99df2"]),
     "blood": dict(sig="data/blood/signatures_lf.parquet", pca="data/blood/pca50.npy",
                   cells="data/blood/cells.parquet", ctype="data/blood/cell_types.parquet",
                   ctcol="cell_type_coarse_blood", pidcol="pid", ycol="y",
-                  held=["2a498ace", "21d3e683", "30cd5311", "ebc2e1ff", "242c6e7f"]),
+                  held=["2a498ace", "21d3e683", "30cd5311", "ebc2e1ff", "242c6e7f",
+                        "9dbab10c", "01ad3cd7"]),
     "crc": dict(sig="data/crc/signatures_lf.parquet", pca="data/crc/pca50.npy",
                 cells="data/crc/cells.parquet", ctype="data/crc/cell_types.parquet",
                 ctcol="cell_type_coarse_crc_atlas", pidcol="sample_id", ycol="tumor",
                 held=["Chen_2024_Cancer_Cell", "Lee_2020_Nat_Genet", "Joanito_2022_Nat_Genet",
-                      "Uhlitz_2021_EMBO_Mol_Med", "Zhang_2020_Cell"]),
+                      "Uhlitz_2021_EMBO_Mol_Med", "Zhang_2020_Cell",
+                      "Wu_2022_Cancer_Discov", "Li_2023_Cancer_Cell", "MUI_Innsbruck",
+                      "Khaliq_2022_Genome_Biol", "Qi_2022_Nat_Commun", "Wang_2023_Sci_Adv"]),
 }
 
 G = {}
@@ -137,11 +143,12 @@ def order_studies(pstud, how, seed):
     if how == "coverage":
         ntrim = 1 if len(names) >= 4 else 0
         return sorted(names, key=lambda s: np.linalg.norm(cents[s] - gc))[:len(names) - ntrim]
+    q = {"quantile": 0.8, "lowq": 0.15}.get(how, 0.8)   # lowq = near refs (low-diversity U-arm)
     start = min(names, key=lambda s: np.linalg.norm(cents[s] - gc))
     order, rest = [start], [s for s in names if s != start]
     while rest:
         d = np.array([min(np.linalg.norm(cents[s] - cents[o]) for o in order) for s in rest])
-        pick = rest[int(np.argmin(np.abs(d - np.quantile(d, 0.8))))]
+        pick = rest[int(np.argmin(np.abs(d - np.quantile(d, q))))]
         order.append(pick)
         rest.remove(pick)
     return order
